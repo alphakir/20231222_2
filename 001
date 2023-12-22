@@ -1,0 +1,33 @@
+import pandas as pd
+from openpyxl import load_workbook
+from openpyxl.utils.dataframe import dataframe_to_rows
+
+# Create a sample DataFrame (replace this with your actual DataFrame)
+data = {'Column1': [1, 2, 3], 'Column2': ['A', 'B', 'C']}
+df = pd.DataFrame(data)
+
+# Specify the Excel file and sheet name
+excel_file_path = 'path/to/your/excel/file.xlsx'
+sheet_name = 'Sheet1'  # Replace with the actual sheet name
+
+# Load the existing Excel workbook
+workbook = load_workbook(excel_file_path)
+
+# Select the sheet
+sheet = workbook[sheet_name]
+
+# Get the header and data rows from the DataFrame
+rows = list(dataframe_to_rows(df, index=False, header=True))
+
+# Determine the starting row to overwrite (default to 1 if the sheet is empty)
+start_row = 1 if sheet.max_row == 0 else sheet.max_row + 1
+
+# Overwrite the values in the Excel sheet starting from the determined row
+for row_index, row in enumerate(rows, start=start_row):
+    for col_index, value in enumerate(row, start=1):
+        sheet.cell(row=row_index, column=col_index, value=value)
+
+# Save the changes to the Excel file
+workbook.save(excel_file_path)
+
+print("DataFrame values overwritten in Excel sheet successfully.")
